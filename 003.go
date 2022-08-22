@@ -14,18 +14,21 @@ type Node struct {
 //the tree
 func main() {
 	root := Node{val: "root"}
-	root.left = &Node{val: "left"}
+	//root.left = &Node{val: "left"}
 	//root.left.left = &Node{val: "left.left"}
 	root.right = &Node{val: "right"}
-	fmt.Println(root)
 	s := serialize(root)
 	fmt.Println(s)
 	sz_root, err := deserialize(s)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(sz_root)
+		fmt.Println(serialize(*sz_root))
 	}
+
+	//s = "(root,left,right)"
+	//sz, _ := deserialize(s)
+	//fmt.Print(sz)
 
 }
 
@@ -53,22 +56,10 @@ func serialize(node Node) string {
 	return "(" + s + ")"
 }
 
-//root := Node{val: "root"}
-//root.left = &Node{val: "left"}
-//root.left.left = &Node{val: "left.left"}
-//root.right = &Node{val: "right"}
-//serialize(root) = "(root,(left,(left.left,,),),(right,,))"
-//could have
-//(root,,)
-//(root,left,)
-//(root,,right)
-//(root,left,right)
-//(left,,)
-
+//deserialize a string enclosed in (), format (self,left,right)
 func deserialize(s string) (*Node, error) {
-	//format is (self,left,right)
 	n := new(Node)
-
+	//check that we have an enclosure
 	if strings.HasPrefix(s, "(") && strings.HasSuffix(s, ")") {
 		end_val := strings.Index(s, ",")
 		n.val = s[1:end_val]
@@ -86,6 +77,7 @@ func deserialize(s string) (*Node, error) {
 				return n, err
 			}
 			n.left = left_node
+			end_val = end_val + len(left) + 1
 		} else {
 			end_left_val := strings.Index(s[end_val+1:], ",")
 			left := Node{val: s[end_val+1 : end_left_val]}
@@ -94,7 +86,6 @@ func deserialize(s string) (*Node, error) {
 		}
 		//next_token = s[end_val : end_val+1]
 		next_token = s[end_val+1 : end_val+2]
-		fmt.Printf("s=%v, next_token = %v, end_val = %v\n", s, next_token, end_val)
 		if next_token == ")" { //no right node, return n
 			return n, nil
 		} else if next_token == "(" { //find the end of this parenthesized enclosure and deserialize it, it is left node
