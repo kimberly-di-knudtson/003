@@ -14,9 +14,10 @@ type Node struct {
 //the tree
 func main() {
 	root := Node{val: "root"}
-	//root.left = &Node{val: "left"}
-	//root.left.left = &Node{val: "left.left"}
+	root.left = &Node{val: "left"}
+	root.left.left = &Node{val: "left.left"}
 	root.right = &Node{val: "right"}
+	root.right.left = &Node{val: "right.left"}
 	s := serialize(root)
 	fmt.Println(s)
 	sz_root, err := deserialize(s)
@@ -42,6 +43,7 @@ func main() {
 //serialize(root.left) = "(left,(left.left,,)," = this.val+serialize(this.left)+serilize(this.right)
 //serialize(root.right) = "(right,,)" =this.val+serialize(this.left)+serialize(this.right)
 //serialize(root) = "(root,(left,(left.left,,),),(right,,))"
+//Can make - (root,(left,left.left,),right)? - childfree nodes have no extra ,,? - maybe later...
 
 func serialize(node Node) string {
 	s := node.val + ","
